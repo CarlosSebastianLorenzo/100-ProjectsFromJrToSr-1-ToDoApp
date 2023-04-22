@@ -43,6 +43,8 @@ main{
     justify-content: flex-end;
     align-items: flex-end;
     padding: 1em;
+    overflow: hidden;
+    border: #191818 1.5em solid;
 }
 #calculate{
     font-size:xx-large;
@@ -51,6 +53,7 @@ main{
 #result{
     color: #f0f0f3;
     font-size:xxx-large;
+    min-height: 1.5em;
 }
 #keyboard{
     padding: 2em;
@@ -116,4 +119,13 @@ width: 100%;}
     .calculator{
         scale:.8;
     }
+}
+.bg{
+    position: absolute;
+    height: 25em;
+    width: 25em;
+}
+div:nth-child(3){
+    top: 10em;
+    right: 10em;
 }
