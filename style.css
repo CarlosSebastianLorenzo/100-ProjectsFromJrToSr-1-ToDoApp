@@ -11,7 +11,7 @@ body{
     overflow: hidden;
 }
 main{
-    min-height: 100vh;
+    max-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,6 +32,7 @@ main{
     height: 48em;
     width: 25em;
     position: relative;
+    top: 5em;
 }
 .calculator::before{
     content: "";
@@ -175,9 +176,11 @@ width: 100%;}
         overflow:auto;
     }
     main{
-        padding: 1em
+        padding: 1em;
+        max-height:none;
     }
     .calculator{
+        top: 0;
         scale:.8;
     }
 }
