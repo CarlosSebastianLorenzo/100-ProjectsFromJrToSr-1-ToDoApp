@@ -1,134 +1,106 @@
-const clear = document.getElementById('clear');
-const negative = document.getElementById('negative');
-const percentage = document.getElementById('percentage');
-const division = document.getElementById('division');
-const seven = document.getElementById('seven');
-const eight = document.getElementById('eight');
-const nine = document.getElementById('nine');
-const four = document.getElementById('four');
-const five = document.getElementById('five');
-const six = document.getElementById('six');
-const subtract = document.getElementById('subtract');
-const one = document.getElementById('one');
-const two = document.getElementById('two');
-const three = document.getElementById('three');
 const plus = document.getElementById('plus');
-const zero = document.getElementById('zero');
-const decimal = document.getElementById('decimal');
+const subtract = document.getElementById('subtract');
+const multiplication = document.getElementById('multiplication');
+const division = document.getElementById('division');
+
+const operations = [plus, subtract, multiplication, division]
+
 const equal = document.getElementById('equal');
-const calculate = document.getElementById('calculate');
-const result = document.getElementById('result');
+const percentage = document.getElementById('percentage');
 
-let screen = "";
-let secondScreen = "";
-let operation = "";
+const numbers = document.querySelectorAll('.number');
 
-function showScreen() {
-    result.innerHTML = screen;
-}
-function showCalculate(){
-    calculate.innerHTML = screen;
-}
-function operate(e){
-    operation = e
-    screen += e;
-    showCalculate();
-    secondScreen = screen;
-    screen = "";
-}
-function account(e,d){
-    const number1 = parseInt(e,10)
-    const number2 = parseInt(d,10)
-    let account
-    operation==="+"?
-    account = number1 + number2 :
-    operation ===  "-" ?
-    account = number1 - number2 : 
-    operation ===  "/" ?
-    account = number1 / number2 : 
-    account = number1 * number2 
-    return account
+const decimal = document.getElementById('decimal');
+const negative = document.getElementById('negative');
+
+const clear = document.getElementById('clear');
+
+const secondScreen = document.getElementById('calculate');
+const screen = document.getElementById('result');
+
+let lastNumber = ""
+let lastResult = ""
+let operation = ""
+let lastEqual = ""
+
+//Volver a un string una ecuacion aritmética
+function parse(str) {
+    return Function(`'use strict'; return (${str})`)()
 }
 
-clear.addEventListener('click', function(){
-    screen = "";
-    secondScreen = "";
-    showScreen();
-    showCalculate();
-})
-negative.addEventListener('click', function(){
-    if(screen === "") return;
-    if(!screen.includes('-')){
-        screen = "-" + screen;
-    } else{
-        screen = screen.split("-")[1];
+numbers.forEach(e => e.addEventListener('click',function(e) {
+    if(lastEqual!==""){
+        secondScreen.innerHTML = ""
+        lastEqual = ""
+        operation = ""
+        lastResult = ""
     }
-    showScreen();
+    lastNumber = lastNumber+e.target.innerHTML
+    screen.innerHTML = lastNumber
+}))
+decimal.addEventListener('click',function() {
+    if (!lastNumber.includes(".")){
+        lastNumber === ""?lastNumber += "0.":lastNumber += ".";
+        screen.innerHTML = lastNumber
+    }
 })
-plus.addEventListener('click', function(){
-    operate("+")
+negative.addEventListener('click',function() {
+    if(lastNumber!=""){
+    lastNumber.includes("-")?
+        lastNumber = lastNumber.substring(2,lastNumber.length-1)
+        : lastNumber = "(-"+lastNumber+")";
+    screen.innerHTML = lastNumber
+    }
 })
-subtract.addEventListener('click', function(){
-    operate("-")
+clear.addEventListener('click',function() {
+    screen.innerHTML= "";
+    secondScreen. innerHTML = "";
+    lastNumber = "";
+    lastResult = "";
+    operation = "";
 })
-multiplication.addEventListener('click', function(){
-    operate("×")
-})
-division.addEventListener('click', function(){
-    operate("/")
-})
+operations.forEach(e => e.addEventListener('click',function(e) {
+    lastEqual = ""
+    switch (e.target.id) {
+        case "plus": operation = "+";
+        break;
+        case "subtract": operation = "-";
+        break;
+        case "division": operation = "/";
+        break;
+        default: operation = "*";
+        break;
+    }
+    if(lastNumber!= "") {
+        let ecuation = screen.innerHTML + operation
+        let showInScreen = parse(lastResult + screen.innerHTML)
+        if(showInScreen % 1 !== 0){showInScreen = showInScreen.toFixed(6)}
+        screen.innerHTML = showInScreen
+        secondScreen.innerHTML += ecuation
+        lastResult = screen.innerHTML + operation
+    }else{
+        lastResult = lastResult.substring(0, lastResult.length-1)+operation
+        secondScreen.innerHTML = secondScreen.innerHTML.substring(0, secondScreen.innerHTML.length-1)+operation
+    }
+    lastNumber = ""
+    console.log(lastResult)
+}))
 equal.addEventListener('click',function(){
-    let calculation = account(screen, secondScreen)
-    screen = screen + secondScreen
-    showCalculate();
-    screen = calculation;
-    showScreen();
-    screen ="";
-    secondScreen= "";
-});
-zero.addEventListener('click',function(){
-    screen += "0"
-    showScreen();
-});
-one.addEventListener('click', function(){
-    screen += "1"
-    showScreen();
-})
-two.addEventListener('click', function(){
-    screen += "2"
-    showScreen();
-})
-three.addEventListener('click', function(){
-    screen += "3"
-    showScreen();
-})
-four.addEventListener('click', function(){
-    screen += "4"
-    showScreen();
-})
-five.addEventListener('click', function(){
-    screen += "5"
-    showScreen();
-})
-six.addEventListener('click', function(){
-    screen += "6"
-    showScreen();
-})
-seven.addEventListener('click', function(){
-    screen += "7"
-    showScreen();
-})
-eight.addEventListener('click', function(){
-    screen += "8"
-    showScreen();
-})
-nine.addEventListener('click', function(){
-    screen += "9"
-    showScreen();
-})
-decimal.addEventListener('click', function(){
-    if(!screen.includes(".")){
-        screen += "."
-        showScreen();
+    if(lastNumber!==""){
+        let showInScreen = parse(lastResult + screen.innerHTML)
+        if(showInScreen % 1 !== 0){showInScreen = showInScreen.toFixed(6)}
+        screen.innerHTML = showInScreen
+        lastEqual = lastNumber
+    } else {
+        let showInScreen = parse(screen.innerHTML+operation+lastEqual)
+        if(showInScreen % 1 !== 0){showInScreen = showInScreen.toFixed(6)}
+        screen.innerHTML = showInScreen
     }
-});
+    lastResult = screen.innerHTML + operation
+    secondScreen.innerHTML += lastEqual + operation
+    lastNumber = ""
+})
+percentage.addEventListener('click',function(){
+        lastNumber = parse(lastNumber) / 100
+        screen.innerHTML = lastNumber
+})
